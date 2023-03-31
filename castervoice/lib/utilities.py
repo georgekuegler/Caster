@@ -212,20 +212,24 @@ def reboot():
         printer.out(popen_parameters)
         subprocess.Popen(popen_parameters)
     if engine.name == 'natlink':
-        import natlinkstatus # pylint: disable=import-error
-        status = natlinkstatus.NatlinkStatus()
-        if status.NatlinkIsEnabled() == 1:
-            # Natlink in-process
-            popen_parameters.append(settings.SETTINGS["paths"]["REBOOT_PATH"])
-            popen_parameters.append(settings.SETTINGS["paths"]["ENGINE_PATH"])
-            username = status.getUserName()
-            popen_parameters.append(username)
-            printer.out(popen_parameters)
-            subprocess.Popen(popen_parameters)
-        else:
-           # Natlink out-of-process
-            engine.disconnect()
-            subprocess.Popen([sys.executable, '-m', 'dragonfly', 'load', '--engine', 'natlink', '_*.py', '--no-recobs-messages'])
+        # import natlinkstatus # pylint: disable=import-error
+        # status = natlinkstatus.NatlinkStatus()
+        # if status.NatlinkIsEnabled() == 1:
+        #     # Natlink in-process
+        
+        # natlinkstatus was removed, not sure how to check for in-process
+        # Natlink is always in process for me. 
+        # Temporary fix: commented out check for out of process running
+        popen_parameters.append(settings.SETTINGS["paths"]["REBOOT_PATH"])
+        popen_parameters.append(settings.SETTINGS["paths"]["ENGINE_PATH"])
+        # username = status.getUserName()
+        # popen_parameters.append(username)
+        printer.out(popen_parameters)
+        subprocess.Popen(popen_parameters)
+        # else:
+        #    # Natlink out-of-process
+        #     engine.disconnect()
+        #     subprocess.Popen([sys.executable, '-m', 'dragonfly', 'load', '--engine', 'natlink', '_*.py', '--no-recobs-messages'])
 
 
 def default_browser_command():
