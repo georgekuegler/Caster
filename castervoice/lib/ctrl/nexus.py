@@ -2,7 +2,7 @@ from castervoice.lib.ctrl.mgr.grammar_container.basic_grammar_container import B
 from castervoice.lib.ctrl.mgr.ccr_toggle import CCRToggle
 from castervoice.lib.ctrl.mgr.companion.companion_config import CompanionConfig
 from castervoice.lib.ctrl.mgr.grammar_activator import GrammarActivator
-from castervoice.lib.ctrl.mgr.loading.reload.manual_reload_observable import ManualReloadObservable
+from castervoice.lib.ctrl.mgr.loading.reload.everything_reload_observable import ManualReloadObservable
 from castervoice.lib.ctrl.mgr.loading.reload.timer_reload_observable import TimerReloadObservable
 from castervoice.lib.ctrl.mgr.rule_maker.mapping_rule_maker import MappingRuleMaker
 from castervoice.lib.ctrl.mgr.rules_config import RulesConfig
