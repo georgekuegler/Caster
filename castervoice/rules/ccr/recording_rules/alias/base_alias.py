@@ -10,6 +10,8 @@ from castervoice.lib.merge.state.actions import AsynchronousAction
 from castervoice.lib.merge.state.actions2 import NullAction
 from castervoice.lib.merge.state.short import R, S, L
 
+from library import notify
+
 
 class BaseAliasRule(BaseSelfModifyingRule):
     """
@@ -31,7 +33,7 @@ class BaseAliasRule(BaseSelfModifyingRule):
             text = commands[spec]
             mapping[spec] = R(Text(text), rdescript="{}: {}".format(pronunciation, spec))
         # add command for creating new aliases
-        mapping["{} [<s>]".format(pronunciation)] = R(
+        mapping["create {} <s>".format(pronunciation)] = R(
             Function(lambda s: self._alias(s)), rdescript="Create {}".format(pronunciation))
         # add command for deleting all aliases
         mapping["delete {}es".format(pronunciation)] = R(
@@ -59,6 +61,7 @@ class BaseAliasRule(BaseSelfModifyingRule):
             if spec:
                 spec = re.sub(r'[^A-Za-z\'\s]+', '', str(spec)).lower() # Sanitize free dictation for spec, words and apostrophes only.
                 self._refresh(spec, str(text))
+                notify.toast(f"{spec} -> \n{str(text)}", self.get_pronunciation())
             else:
                 h_launch.launch(settings.QTYPE_INSTRUCTIONS, data="Enter_spec_for_command|")
                 on_complete = AsynchronousAction.hmc_complete(
@@ -72,6 +75,7 @@ class BaseAliasRule(BaseSelfModifyingRule):
     def _delete_all(self):
         self._config.replace({})
         self._refresh()
+        notify.toast(f"Deleting All", self.pronunciation())
 
     @staticmethod
     def _read_highlighted(max_tries):
