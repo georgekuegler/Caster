@@ -34,10 +34,12 @@ class BaseAliasRule(BaseSelfModifyingRule):
             mapping[spec] = R(Text(text), rdescript="{}: {}".format(pronunciation, spec))
         # add command for creating new aliases
         mapping["create {} <s>".format(pronunciation)] = R(
-            Function(lambda s: self._alias(s)), rdescript="Create {}".format(pronunciation))
+            Function(lambda s: self._alias(s)),
+            rdescript="Create {}".format(pronunciation))
         # add command for deleting all aliases
-        mapping["delete {}es".format(pronunciation)] = R(
-            Function(lambda: self._delete_all()), rdescript="Delete {}".format(pronunciation))
+        mapping["delete {0}es|{0} erase".format(pronunciation)] = R(
+            Function(lambda: self._delete_all()),
+            rdescript="Delete {}".format(pronunciation))
         self._smr_mapping = mapping
 
     def _refresh(self, *args):
@@ -59,23 +61,24 @@ class BaseAliasRule(BaseSelfModifyingRule):
         text = BaseAliasRule._read_highlighted(10)
         if text is not None:
             if spec:
-                spec = re.sub(r'[^A-Za-z\'\s]+', '', str(spec)).lower() # Sanitize free dictation for spec, words and apostrophes only.
+                spec = re.sub(r'[^A-Za-z\'\s]+', '', str(spec)).lower(
+                )  # Sanitize free dictation for spec, words and apostrophes only.
                 self._refresh(spec, str(text))
-                notify.toast(f"{spec} -> \n{str(text)}", self.get_pronunciation())
+                notify.toast(f"{spec} -> \n{str(text)}", self.pronunciation)
             else:
-                h_launch.launch(settings.QTYPE_INSTRUCTIONS, data="Enter_spec_for_command|")
+                h_launch.launch(settings.QTYPE_INSTRUCTIONS,
+                                data="Enter_spec_for_command|")
                 on_complete = AsynchronousAction.hmc_complete(
                     lambda data: self._refresh(data[0].replace("\n", ""), text))
-                AsynchronousAction(
-                    [L(S(["cancel"], on_complete))],
-                    time_in_seconds=0.5,
-                    repetitions=300,
-                    blocking=False).execute()
+                AsynchronousAction([L(S(["cancel"], on_complete))],
+                                   time_in_seconds=0.5,
+                                   repetitions=300,
+                                   blocking=False).execute()
 
     def _delete_all(self):
         self._config.replace({})
         self._refresh()
-        notify.toast(f"Deleting All", self.pronunciation())
+        notify.toast(f"Deleting All", self.pronunciation)
 
     @staticmethod
     def _read_highlighted(max_tries):
