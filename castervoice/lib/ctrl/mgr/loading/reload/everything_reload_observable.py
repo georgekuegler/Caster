@@ -6,7 +6,11 @@ from castervoice.lib.ctrl.mgr.loading.reload.base_reload_observable import (
 from castervoice.lib.ctrl.mgr.rule_details import RuleDetails
 
 from time import sleep
-from natlink import setMicState
+
+try:
+    from natlink import setMicState
+except:
+    setMicState = lambda x: None
 
 try:
     from library import notify
